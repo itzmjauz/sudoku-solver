@@ -1,2 +1,7 @@
 sudoku-solve
 *.class
+
+
+# Added by cargo
+
+/target
