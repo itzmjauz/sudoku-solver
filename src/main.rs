@@ -1,65 +1,67 @@
 use std::env;
 
-fn print_world(world: [[u8; 9]; 9]) {
-    println!("Printing world:");
-    for (world_row, y) in world.iter().zip(0..9) {
-        if y == 3 || y == 6 {
-            println!("{:-<21}", "");
-        }
-        for (c, x) in world_row.iter().zip(0..9) {
-            print!("{} ", c);
-            if x == 2 || x == 5 {
-                print!("| ");
+struct World {
+    world: [[u8; 9]; 9],
+}
+
+impl World {
+    fn init(&mut self) {} //can maybe load in a world
+
+    fn init_from_array(&mut self, arr: [u8; 81]) {
+        for (world_row, i) in self.world.iter_mut().zip(0..9) {
+            let arr_slice: &[u8] = &arr[(i * 9)..((i + 1) * 9)];
+
+            for (world_location, arr_location) in world_row.iter_mut().zip(arr_slice) {
+                *world_location = *arr_location;
             }
         }
-        print!("\n");
+    }
+
+    fn print(self) {
+        println!("Printing world..");
+        for (world_row, y) in self.world.iter().zip(0..9) {
+            for (world_col, x) in world_row.iter().zip(0..9) {
+                print!("{}", world_col);
+                match x {
+                    2 | 5 => print!(" | "),
+                    _ => print!(" "),
+                }
+            }
+            println!("");
+            if y == 2 || y == 5 {
+                println!("{:-<21}", "");
+            }
+        }
     }
 }
 
-fn parse_init_vector() -> Option<[u8; 81]> {
-    let args: Vec<String> = env::args().collect();
-    let mut init_vector: [u8; 81] = [0; 81];
+fn parse_arg(arg: &str) -> Result<[u8; 81], &'static str> {
+    let mut vector: [u8; 81] = [0; 81];
 
-    if args.len() != 2 || args[1].len() != 81 {
-        println!("Args incorrect");
-        println!("Defaulting to empty sudoku");
-        return None;
-    }
-
-    for (i, c) in args[1].chars().enumerate() {
+    for (i, c) in arg.chars().enumerate() {
         let num = c as u8 - 0x30;
         if num > 9 {
-            return None;
+            return Err("Input numbers above 9 are not allowed:  0..9");
         }
-        init_vector[i] = num;
+        vector[i] = num;
     }
-    Some(init_vector)
-}
 
-fn parse_world_vector(init_vector: [u8; 81]) -> [[u8; 9]; 9] {
-    let mut world: [[u8; 9]; 9] = [[0; 9]; 9];
-
-    for (world_row, i) in world.iter_mut().zip(0..9) {
-        let init_vector_slice: &[u8] = &init_vector[(i * 9)..((i + 1) * 9)];
-
-        for (world_location, init_vector_location) in
-            world_row.iter_mut().zip(init_vector_slice.iter())
-        {
-            *world_location = *init_vector_location;
-        }
-    }
-    world
-}
-
-fn create_world(init: Option<[u8; 81]>) -> [[u8; 9]; 9] {
-    match init {
-        None => [[0; 9]; 9],
-        Some(init_vector) => parse_world_vector(init_vector),
-    }
+    return Ok(vector);
 }
 
 fn main() {
-    let init_vector = parse_init_vector();
-    let world = create_world(init_vector);
-    print_world(world);
+    //Collect arguments & init world
+    let args: Vec<String> = env::args().collect();
+    let mut world = World { world: [[0; 9]; 9] };
+    //bound checking
+    if args.len() == 2 {
+        if args[1].len() != 81 {
+            println!("Sudoku input string of incorrect length: {}", args[1].len());
+            world.init();
+        } else {
+            world.init_from_array(parse_arg(&args[1]).unwrap());
+        }
+    }
+    //print world
+    world.print();
 }

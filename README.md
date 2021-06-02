@@ -31,5 +31,3 @@ cd src
 rustc main.rs
 ./main
 ```
-
-This one I'm probably going to rewrite using structures and other rust trickery. 
