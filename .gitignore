@@ -1,5 +1,7 @@
 sudoku-solve
 *.class
+*.swp
+*.un~
 
 
 # Added by cargo
