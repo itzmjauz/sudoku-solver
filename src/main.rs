@@ -4,7 +4,7 @@ fn print_world(world: [[u8; 9]; 9]) {
     println!("Printing world:");
     for (world_row, y) in world.iter().zip(0..9) {
         if y == 3 || y == 6 {
-            println!("{:-<21}","");
+            println!("{:-<21}", "");
         }
         for (c, x) in world_row.iter().zip(0..9) {
             print!("{} ", c);
@@ -42,7 +42,9 @@ fn parse_world_vector(init_vector: [u8; 81]) -> [[u8; 9]; 9] {
     for (world_row, i) in world.iter_mut().zip(0..9) {
         let init_vector_slice: &[u8] = &init_vector[(i * 9)..((i + 1) * 9)];
 
-        for (world_location, init_vector_location) in world_row.iter_mut().zip(init_vector_slice.iter()) {
+        for (world_location, init_vector_location) in
+            world_row.iter_mut().zip(init_vector_slice.iter())
+        {
             *world_location = *init_vector_location;
         }
     }
@@ -58,7 +60,6 @@ fn create_world(init: Option<[u8; 81]>) -> [[u8; 9]; 9] {
 
 fn main() {
     let init_vector = parse_init_vector();
-    
     let world = create_world(init_vector);
     print_world(world);
 }
