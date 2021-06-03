@@ -54,7 +54,7 @@ fn main() {
   let args: Vec<String> = env::args().collect();
   let mut world = World { world: [[0; 9]; 9] };
   //bound checking
-  if args.len() > 2 {
+  if args.len() > 1 {
     if args[1].len() != 81 {
       println!("Sudoku input string of incorrect length: {}", args[1].len());
       world.init();
