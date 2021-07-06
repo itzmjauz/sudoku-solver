@@ -127,7 +127,6 @@ impl Sudoku {
                         .collect();
 
                     if options.len() == 1 {
-                        println!("unique value found!");
                         return Some((options[0], x, y));
                     }
                 }
@@ -140,7 +139,7 @@ impl Sudoku {
         for value in 0..9 {
             for x in 0..9 {
                 for y in 0..9 {
-                    if self.world[y][x].value == 0 {
+                    if self.world[y][x].value == 0 && self.world[y][x].options[value] == true {
                         if self.unique_option_linear(value, x, y) {
                             return Some((value + 1, x, y));
                         } else if self.unique_option_block(value, x, y) {
@@ -187,7 +186,7 @@ impl Sudoku {
             }
         }
         //println!("unique value : {}, x: {}, y: {}", value, x, y);
-        self.print();
+        //self.print();
         return true;
     }
 }
@@ -195,8 +194,8 @@ impl Sudoku {
 fn main() {
     let mut sudoku = Sudoku::new(INPUT);
     sudoku.propagate_all();
-    sudoku.print();
     while sudoku.empty_cells != 0 {
+        sudoku.print();
         if let Some((value, x, y)) = sudoku.solve_step_a() {
             println!("step_a : value : {} - x: {} - y: {}", value, x, y);
             sudoku.propagate(value, x, y);
@@ -212,9 +211,6 @@ fn main() {
             break;
         }
     }
-    sudoku.print();
-    sudoku.print_options();
-    
 }
 
 ///test driven development
